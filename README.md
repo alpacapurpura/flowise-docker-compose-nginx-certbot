@@ -3,9 +3,20 @@
 Este archivo funciona para una instalación en ambiente limpio de Linux Debian (VM). Aquí se instalará: Flowise, Docker, Certbot (para la generación de certificado SSL)
 
 ## Para ejecutar
+1. Se debe crear una carpeta flowise, y allí ingresar:
+- SUDO su
+- git clone https://github.com/alpacapurpura/flowise-docker-compose-nginx-certbot.git
 
-SUDO su
+2. Cambiamos el nombre del archivo .env.template a .env:
+- cp .env.template .env 
+
+3. Edita el .env con tus valores reales
+- nano .env
+
+3. Construir ambiente
 docker compose build
+
+4. Levantar ambiente
 docker compose up -d
 
 ## Notas importantes:
