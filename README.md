@@ -22,10 +22,10 @@ Este archivo funciona para una instalación en ambiente limpio de Linux Debian (
 - sudo chmod -R 755 data
 
 6. Construir ambiente
-sudo docker compose build
+- sudo docker compose build
 
 7. Levantar ambiente
-sudo docker compose up -d
+- sudo docker compose up -d
 
 ## Notas importantes:
 
