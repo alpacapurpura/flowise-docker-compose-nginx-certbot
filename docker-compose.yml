@@ -5,6 +5,11 @@ services:
         image: flowiseai/flowise:latest
         container_name: flowise
         restart: always
+        healthcheck:
+          test: ["CMD-SHELL", "curl -f http://localhost:${FLOWISE_PORT}/api/v1/health || exit 1"]
+          interval: 10s
+          timeout: 5s
+          retries: 5
         environment:
           - PORT=${FLOWISE_PORT}
           - CORS_ORIGINS=${CORS_ORIGINS}
@@ -69,8 +74,14 @@ services:
         - DOMAIN=${DOMAIN}
         - FLOWISE_PORT=${FLOWISE_PORT}
       depends_on:
-        - flowise
-      entrypoint: sh -c "sleep 15 && nginx -g 'daemon off;'"
+        flowise:
+          condition: service_healthy
+      entrypoint: 
+        entrypoint: |
+          sh -c "while ! nc -z flowise ${FLOWISE_PORT}; do 
+          echo 'Esperando a Flowise...';
+          sleep 5;
+          done && nginx -g 'daemon off;'"
       networks:
         - web
     certbot:
