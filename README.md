@@ -8,18 +8,21 @@ Este archivo funciona para una instalación en ambiente limpio de Linux Debian (
 - git clone https://github.com/alpacapurpura/flowise-docker-compose-nginx-certbot.git
 
 2. Cambiamos el nombre del archivo .env.template a .env:
-- sudo cp .env.template .env 
+- sudo cp .env.example .env 
 
 3. Edita el .env con tus valores reales
 - sudo nano .env
 
-4. Da permisos a archivo data creado
+4. Crea la estructura de carpetas necesaria para la correcta ejecución
+- sudo mkdir -p data/certbot/{conf,www}
+
+5. Da permisos a archivo data creado
 - sudo chmod -R 755 data
 
-3. Construir ambiente
+6. Construir ambiente
 sudo docker compose build
 
-4. Levantar ambiente
+7. Levantar ambiente
 sudo docker compose up -d
 
 ## Notas importantes:
