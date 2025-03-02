@@ -8,7 +8,7 @@ Este archivo funciona para una instalación en ambiente limpio de Linux Debian (
 - git clone https://github.com/alpacapurpura/flowise-docker-compose-nginx-certbot.git
 
 2. Cambiamos el nombre del archivo .env.template a .env:
-- sudo cp .env.example .env 
+- sudo cp env.example .env 
 
 3. Edita el .env con tus valores reales
 - sudo nano .env
@@ -33,7 +33,6 @@ El primer inicio puede tardar hasta 30 segundos mientras se genera el certificad
 
 Para renovaciones automáticas, puedes agregar un cron job en el host:
 
-bash
-Copy
-0 0 * * * docker-compose -f /ruta/a/tu/docker-compose.yml run --rm certbot renew
+- 0 0 * * * docker-compose -f /ruta/a/tu/docker-compose.yml run --rm certbot renew
+
 Todos los cambios de configuración se hacen mediante el archivo .env
