@@ -2,7 +2,8 @@ version: '3.1'
 
 services:
     flowise:
-        image: flowiseai/flowise
+        image: flowiseai/flowise:latest
+        container_name: flowise
         restart: always
         environment:
             - PORT=${FLOWISE_PORT}
@@ -54,6 +55,7 @@ services:
         entrypoint: /bin/sh -c "sleep 3; flowise start"
     nginx:
       build: ./nginx
+      container_name: nginx
       restart: always
       ports:
         - "80:80"
@@ -70,6 +72,7 @@ services:
         - web
     certbot:
       image: certbot/certbot
+      container_name: certbot
       restart: unless-stopped
       volumes:
         - ./data/certbot/conf:/etc/letsencrypt
