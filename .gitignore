@@ -7,3 +7,5 @@ docker-compose.override.yml
 # Ignorar archivos de certificados SSL
 *.pem
 *.key
+# Excepciones para mantener estructura
+!.gitkeep
