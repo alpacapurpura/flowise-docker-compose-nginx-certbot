@@ -78,15 +78,10 @@ services:
         flowise:
           condition: service_healthy
       entrypoint: 
-        entrypoint:
-          - sh
+        entrypoint: 
+          - /bin/sh
           - -c
-          - |
-            while ! nc -z flowise $${FLOWISE_PORT}; do
-            echo "Esperando a Flowise..."
-            sleep 5
-            done
-            nginx -g "daemon off;"
+          - while ! nc -z flowise $${FLOWISE_PORT}; do echo "Esperando a Flowise..."; sleep 5; done; nginx -g 'daemon off;'
       networks:
         - web
     certbot:
