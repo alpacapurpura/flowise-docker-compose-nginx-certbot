@@ -4,7 +4,8 @@ Este archivo funciona para una instalación en ambiente limpio de Linux Debian (
 
 ## Para ejecutar
 1. Descargando la estructura de carpetas:
-- SUDO suttps://github.com/alpacapurpura/flowise-docker-compose-nginx-certbot.git
+- SUDO su 
+- git clone https://github.com/alpacapurpura/flowise-docker-compose-nginx-certbot.git
 - cd flowise-docker-compose-nginx-certbot
 
 
