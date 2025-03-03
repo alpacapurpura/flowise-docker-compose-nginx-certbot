@@ -5,7 +5,7 @@ FROM nginx:alpine
 RUN apk add --no-cache gettext
 
 # Copiar plantilla de configuración
-COPY nginx.conf.template /etc/nginx/templates/nginx.conf
+COPY nginx.conf.template /etc/nginx/templates/
 
 # Script de entrada para procesar variables
 COPY entrypoint.sh /entrypoint.sh

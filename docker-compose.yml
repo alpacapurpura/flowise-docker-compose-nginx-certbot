@@ -1,4 +1,4 @@
-version: '3.1'
+version: '3.8'
 
 services:
     flowise:
@@ -11,7 +11,7 @@ services:
           timeout: 5s
           retries: 5
         environment:
-          - PORT=${FLOWISE_PORT}
+          - PORT:${PORT}
           - CORS_ORIGINS=${CORS_ORIGINS}
           - IFRAME_ORIGINS=${IFRAME_ORIGINS}
           - FLOWISE_USERNAME=${FLOWISE_USERNAME}
@@ -77,11 +77,7 @@ services:
       depends_on:
         flowise:
           condition: service_healthy
-      entrypoint: 
-        entrypoint: 
-          - /bin/sh
-          - -c
-          - while ! nc -z flowise $${FLOWISE_PORT}; do echo "Esperando a Flowise..."; sleep 5; done; nginx -g 'daemon off;'
+      entrypoint: /bin/sh -c "while ! nc -z flowise $${FLOWISE_PORT}; do sleep 5; done; nginx -g 'daemon off;'"
       networks:
         - web
     certbot:
@@ -91,7 +87,7 @@ services:
       volumes:
         - ./data/certbot/conf:/etc/letsencrypt
         - ./data/certbot/www:/var/www/certbot
-      entrypoint: sh -c "sleep 10 && certbot certonly --webroot -w /var/www/certbot --agree-tos --email ${CERTBOT_EMAIL} -d ${DOMAIN} --non-interactive --keep-until-expiring --force-renewal"
+      entrypoint: sh -c "sleep 15 && certbot certonly --webroot -w /var/www/certbot --agree-tos --email $${CERTBOT_EMAIL} -d $${DOMAIN} --non-interactive --keep-until-expiring --force-renewal"
       networks:
         - web
 networks:
