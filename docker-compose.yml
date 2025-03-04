@@ -30,7 +30,7 @@ services:
             - NGINX_DOMAIN=${NGINX_DOMAIN}
         volumes:
             - ./nginx/conf.d:/etc/nginx/conf.d
-            - ./nginx/ssl:/etc/nginx/ssl
+            - ./nginx/ssl:/etc/letsencrypt
             - ./nginx/www:/var/www/certbot
         depends_on:
             - flowise
