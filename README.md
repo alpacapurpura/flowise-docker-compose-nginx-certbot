@@ -10,7 +10,7 @@ Este archivo funciona para una instalación en ambiente limpio de Linux Debian (
 
 
 2. Generamos el archivo .env tomando como base .env.template:
-- sudo cp env.example .env 
+- sudo cp .env.example .env 
 
 3. Edita el .env con tus valores reales
 - sudo nano .env
