@@ -82,10 +82,13 @@ services:
     image: certbot/certbot
     container_name: certbot
     restart: unless-stopped
+    environment:  # ¡Nueva sección clave!
+      - CERTBOT_EMAIL=${CERTBOT_EMAIL}
+      - DOMAIN=${DOMAIN}
     volumes:
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
-    entrypoint: sh -c "sleep 25 && certbot certonly --webroot -w /var/www/certbot --agree-tos --email $${CERTBOT_EMAIL} -d $${DOMAIN} --non-interactive --keep-until-expiring --force-renewal"
+    entrypoint: sh -c "mkdir -p /var/www/certbot/.well-known/acme-challenge && sleep 25 && certbot certonly --webroot -w /var/www/certbot --agree-tos --email $$CERTBOT_EMAIL -d $$DOMAIN --non-interactive --force-renewal"
     networks:
       - web
 networks:
