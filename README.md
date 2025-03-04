@@ -17,6 +17,7 @@ Este archivo funciona para una instalación en ambiente limpio de Linux Debian (
 
 4. Dar permisos de ejecución al script de inicialización
 - chmod +x init-letsencrypt.sh
+- chmod +x nginx/init.sh
 
 5. Crea los directorios necesarios para Nginx:
 - mkdir -p nginx/conf.d nginx/ssl nginx/www
