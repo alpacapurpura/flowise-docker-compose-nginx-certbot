@@ -27,7 +27,7 @@ services:
             - "80:80"
             - "443:443"
         environment:
-            - NGINX_DOMAIN=${NGINX_DOMAIN}
+            NGINX_DOMAIN: ${NGINX_DOMAIN}
         volumes:
             - ./nginx/conf.d:/etc/nginx/conf.d
             - ./nginx/ssl:/etc/letsencrypt
@@ -41,7 +41,7 @@ services:
         image: certbot/certbot
         container_name: certbot
         environment:
-            - NGINX_DOMAIN=${NGINX_DOMAIN}
+            NGINX_DOMAIN: ${NGINX_DOMAIN}
         volumes:
             - ./nginx/ssl:/etc/letsencrypt
             - ./nginx/www:/var/www/certbot

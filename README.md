@@ -24,7 +24,8 @@ Este archivo funciona para una instalación en ambiente limpio de Linux Debian (
 6. Dar permiso a los directorios creados
 - sudo chmod -R 755 nginx
 
-7. Ejecuta el script de inicialización para obtener el certificado SSL:
+7. Eliminar certificados existentes y ejecutar el script de inicialización para obtener el certificado SSL:
+- sudo rm -rf ./nginx/ssl/*
 - ./init-letsencrypt.sh
 
 8. Una vez que el certificado esté instalado, inicia todos los servicios:
