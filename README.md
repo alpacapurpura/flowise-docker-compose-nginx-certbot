@@ -15,26 +15,20 @@ Este archivo funciona para una instalación en ambiente limpio de Linux Debian (
 3. Edita el .env con tus valores reales
 - sudo nano .env
 
-4. Crea la estructura de carpetas necesaria para la correcta ejecución
-- sudo mkdir -p data/certbot/{conf,www}
+4. Dar permisos de ejecución al script de inicialización
+- chmod +x init-letsencrypt.sh
 
-5. Da permisos a archivo data creado
-- sudo chmod -R 755 data
+5. Crea los directorios necesarios para Nginx:
+- mkdir -p nginx/conf.d nginx/ssl nginx/www
 
-6. Construir ambiente
-- sudo docker compose build
+6. Dar permiso a los directorios creados
+- sudo chmod -R 755 nginx
 
-7. Levantar ambiente
-- sudo docker compose up -d
+7. Ejecuta el script de inicialización para obtener el certificado SSL:
+- ./init-letsencrypt.sh
 
-## Notas importantes:
+8. Una vez que el certificado esté instalado, inicia todos los servicios:
+- docker compose up -d
 
-Asegúrate de que el subdominio apunte a la IP de tu VM
-
-El primer inicio puede tardar hasta 30 segundos mientras se genera el certificado
-
-Para renovaciones automáticas, puedes agregar un cron job en el host:
-
-- 0 0 * * * docker-compose -f /ruta/a/tu/docker-compose.yml run --rm certbot renew
-
-Todos los cambios de configuración se hacen mediante el archivo .env
+9. Para ver los logs si hay algún problema:
+- docker compose logs -f
