@@ -6,8 +6,10 @@ services:
       container_name: flowise
       restart: always
       healthcheck:
-        test: ["CMD-SHELL", "pgrep -f 'flowise start' || exit 1"]
-        interval: 15s
+        test: ["CMD", "nginx", "-t"]
+        interval: 30s
+        timeout: 10s
+        retries: 3
       environment:
         - PORT:${PORT}
         - CORS_ORIGINS=${CORS_ORIGINS}
@@ -54,9 +56,20 @@ services:
       ports:
           - '${PORT}:${PORT}'
       volumes:
-        - ~/.flowise:/root/.flowise
+        - flowise_data:/root/.flowise
       networks:
         - web
+      deploy:
+        resources:
+          limits:
+            memory: 2G
+          reservations:
+            memory: 1G
+      logging:
+        driver: "json-file"
+        options:
+          max-size: "10m"
+          max-file: "3"
       # entrypoint: /bin/sh -c "flowise start"
   nginx:
     build: ./nginx
@@ -94,3 +107,6 @@ services:
 networks:
   web:
     driver: bridge
+volumes:
+  flowise_data:
+    driver: local
