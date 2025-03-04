@@ -1,112 +1,54 @@
 version: '3.8'
 
 services:
-  flowise:
-      image: flowiseai/flowise:latest
-      container_name: flowise
-      restart: always
-      healthcheck:
-        test: ["CMD", "nginx", "-t"]
-        interval: 30s
-        timeout: 10s
-        retries: 3
-      environment:
-        - PORT:${PORT}
-        - CORS_ORIGINS=${CORS_ORIGINS}
-        - IFRAME_ORIGINS=${IFRAME_ORIGINS}
-        - FLOWISE_USERNAME=${FLOWISE_USERNAME}
-        - FLOWISE_PASSWORD=${FLOWISE_PASSWORD}
-        - FLOWISE_FILE_SIZE_LIMIT=${FLOWISE_FILE_SIZE_LIMIT}
-        - DEBUG=${DEBUG}
-        - DATABASE_PATH=${DATABASE_PATH}
-        - DATABASE_TYPE=${DATABASE_TYPE}
-        - DATABASE_PORT=${DATABASE_PORT}
-        - DATABASE_HOST=${DATABASE_HOST}
-        - DATABASE_NAME=${DATABASE_NAME}
-        - DATABASE_USER=${DATABASE_USER}
-        - DATABASE_PASSWORD=${DATABASE_PASSWORD}
-        - DATABASE_SSL=${DATABASE_SSL}
-        - DATABASE_SSL_KEY_BASE64=${DATABASE_SSL_KEY_BASE64}
-        - APIKEY_STORAGE_TYPE=${APIKEY_STORAGE_TYPE}
-        - APIKEY_PATH=${APIKEY_PATH}
-        - SECRETKEY_PATH=${SECRETKEY_PATH}
-        - FLOWISE_SECRETKEY_OVERWRITE=${FLOWISE_SECRETKEY_OVERWRITE}
-        - LOG_LEVEL=${LOG_LEVEL}
-        - LOG_PATH=${LOG_PATH}
-        - BLOB_STORAGE_PATH=${BLOB_STORAGE_PATH}
-        - DISABLE_FLOWISE_TELEMETRY=${DISABLE_FLOWISE_TELEMETRY}
-        - MODEL_LIST_CONFIG_JSON=${MODEL_LIST_CONFIG_JSON}
-        - GLOBAL_AGENT_HTTP_PROXY=${GLOBAL_AGENT_HTTP_PROXY}
-        - GLOBAL_AGENT_HTTPS_PROXY=${GLOBAL_AGENT_HTTPS_PROXY}
-        - GLOBAL_AGENT_NO_PROXY=${GLOBAL_AGENT_NO_PROXY}
-        - DISABLED_NODES=${DISABLED_NODES}
-        - MODE=${MODE}
-        - WORKER_CONCURRENCY=${WORKER_CONCURRENCY}
-        - QUEUE_NAME=${QUEUE_NAME}
-        - QUEUE_REDIS_EVENT_STREAM_MAX_LEN=${QUEUE_REDIS_EVENT_STREAM_MAX_LEN}
-        - REDIS_URL=${REDIS_URL}
-        - REDIS_HOST=${REDIS_HOST}
-        - REDIS_PORT=${REDIS_PORT}
-        - REDIS_PASSWORD=${REDIS_PASSWORD}
-        - REDIS_USERNAME=${REDIS_USERNAME}
-        - REDIS_TLS=${REDIS_TLS}
-        - REDIS_CERT=${REDIS_CERT}
-        - REDIS_KEY=${REDIS_KEY}
-        - REDIS_CA=${REDIS_CA}
-      ports:
-          - '${PORT}:${PORT}'
-      volumes:
-        - flowise_data:/root/.flowise
-      networks:
-        - web
-      deploy:
-        resources:
-          limits:
-            memory: 2G
-          reservations:
-            memory: 1G
-      logging:
-        driver: "json-file"
-        options:
-          max-size: "10m"
-          max-file: "3"
-      # entrypoint: /bin/sh -c "flowise start"
-  nginx:
-    build: ./nginx
-    container_name: nginx
-    restart: always
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      #- ./nginx.conf:/etc/nginx/nginx.conf
-      - ./data/certbot/conf:/etc/letsencrypt
-      - ./data/certbot/www:/var/www/certbot
-    environment:
-      - DOMAIN=${DOMAIN}
-      - FLOWISE_PORT=${FLOWISE_PORT}
-    depends_on:
-      flowise:
-        condition: service_healthy
-    entrypoint: /bin/sh -c "sleep 45 && nginx -g 'daemon off;'"
-    networks:
-      - web
-  certbot:
-    image: certbot/certbot
-    container_name: certbot
-    restart: unless-stopped
-    environment:  # ¡Nueva sección clave!
-      - CERTBOT_EMAIL=${CERTBOT_EMAIL}
-      - DOMAIN=${DOMAIN}
-    volumes:
-      - ./data/certbot/conf:/etc/letsencrypt
-      - ./data/certbot/www:/var/www/certbot
-    entrypoint: sh -c "mkdir -p /var/www/certbot/.well-known/acme-challenge && sleep 25 && certbot certonly --webroot -w /var/www/certbot --agree-tos --email $$CERTBOT_EMAIL -d $$DOMAIN --non-interactive --force-renewal"
-    networks:
-      - web
+    flowise:
+        image: flowiseai/flowise:latest
+        container_name: flowise
+        restart: unless-stopped
+        environment:
+            - PORT=${FLOWISE_PORT}
+            - DATABASE_PATH=${FLOWISE_DATABASE_PATH}
+            - APIKEY_PATH=${FLOWISE_APIKEY_PATH}
+            - DEBUG=${FLOWISE_DEBUG}
+            - EXECUTION_MODE=${FLOWISE_EXECUTION_MODE}
+            - FLOWISE_USERNAME=${FLOWISE_USERNAME}
+            - FLOWISE_PASSWORD=${FLOWISE_PASSWORD}
+            - SECRETKEY_OVERWRITE=${FLOWISE_SECRET_KEY}
+        volumes:
+            - ${FLOWISE_DATA_PATH}:/root/.flowise
+        networks:
+            - flowise-network
+
+    nginx:
+        image: nginx:alpine
+        container_name: nginx
+        restart: unless-stopped
+        ports:
+            - "80:80"
+            - "443:443"
+        environment:
+            - NGINX_DOMAIN=${NGINX_DOMAIN}
+        volumes:
+            - ./nginx/conf.d:/etc/nginx/conf.d
+            - ./nginx/ssl:/etc/nginx/ssl
+            - ./nginx/www:/var/www/certbot
+        depends_on:
+            - flowise
+        networks:
+            - flowise-network
+
+    certbot:
+        image: certbot/certbot
+        container_name: certbot
+        environment:
+            - NGINX_DOMAIN=${NGINX_DOMAIN}
+        volumes:
+            - ./nginx/ssl:/etc/letsencrypt
+            - ./nginx/www:/var/www/certbot
+        entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+        networks:
+            - flowise-network
+
 networks:
-  web:
-    driver: bridge
-volumes:
-  flowise_data:
-    driver: local
+    flowise-network:
+        driver: bridge
