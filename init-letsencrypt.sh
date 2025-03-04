@@ -33,7 +33,7 @@ EOF
 
 # Iniciar Nginx
 echo "### Iniciando Nginx ###"
-docker-compose up --force-recreate -d nginx
+docker compose up --force-recreate -d nginx
 
 # Esperar a que Nginx esté listo
 echo "### Esperando a que Nginx esté listo ###"
@@ -52,14 +52,14 @@ fi
 
 # Eliminar certificados existentes
 echo "### Eliminando certificados existentes ###"
-docker-compose run --rm --entrypoint "\
+docker compose run --rm --entrypoint "\
   rm -Rf /etc/letsencrypt/live/${domains[0]} && \
   rm -Rf /etc/letsencrypt/archive/${domains[0]} && \
   rm -Rf /etc/letsencrypt/renewal/${domains[0]}.conf" certbot
 
 # Solicitar certificado
 echo "### Solicitando certificado ###"
-docker-compose run --rm --entrypoint "\
+docker compose run --rm --entrypoint "\
   certbot certonly --webroot -w /var/www/certbot \
     --email $email \
     -d ${domains[0]} \
@@ -129,6 +129,6 @@ EOF
 
 # Reiniciar Nginx
 echo "### Reiniciando Nginx ###"
-docker-compose up -d --force-recreate nginx
+docker compose up -d --force-recreate nginx
 
 echo "### ¡Configuración completada! ###" 
